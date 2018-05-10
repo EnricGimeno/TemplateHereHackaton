@@ -1,0 +1,3 @@
+$('.leftmenu').BootSideMenu({
+    side:"left"
+});
