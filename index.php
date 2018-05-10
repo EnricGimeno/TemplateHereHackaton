@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Bootstrap 101 Template</title>
 
@@ -20,20 +20,27 @@
   </head>
   <body>
     <div class="leftmenu">
-      <h4>Lef Panel</h4>
+      <h4>Left Panel</h4>
     </div>
-
-    <div class="container">
-    <h4>Map</h4>
-    </div>
+    
+    <div class="here-maps" id="mapContainer"></div>
+    <!-- <div id="mapContainer" style="width: 100%; height: 400px; background: grey" /> -->
+    <!-- <div class="container">
+    <div class="here-maps" id="mapContainer"></div>
+    </div> -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/BootSideMenu.js"></script>
-    <script src="js/leftpanel.js"></script>
-
+    <script src="http://js.api.here.com/v3/3.0/mapsjs-core.js"
+      type="text/javascript" charset="utf-8"></script>
+    <script src="http://js.api.here.com/v3/3.0/mapsjs-service.js"
+      type="text/javascript" charset="utf-8"></script>
     </script>
+    <!--My Scripts-->
+    <script src="js/leftpanel.js"></script>
+    <script src="js/map.js"></script>
   </body>
 </html>
