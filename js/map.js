@@ -39,9 +39,11 @@ var iconHelper = new H.map.Icon('images/helper.png');
 // Create groups to get the markers categorised
 var groupHelped = new H.map.Group(); map.addObject(groupHelped);
 var groupHelper = new H.map.Group(); map.addObject(groupHelper);
+var groupError = new H.map.Group(); map.addObject(groupError);
 
 addMarker(39.4670, -0.4037, 'helped');
 addMarker(39.4600, -0.4007, 'helper');
+addMarker(39.4690, -0.4097, 'whatever');
 
 // Add a marker
 function addMarker(latitud, longitud, type){
@@ -53,6 +55,6 @@ function addMarker(latitud, longitud, type){
     myMarker.setIcon(iconHelper);
     groupHelper.addObject(myMarker);
   } else {
-    map.addObject(myMarker);
+    groupError.addObject(myMarker);
   }
 }
