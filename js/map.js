@@ -33,12 +33,23 @@ map.addEventListener('tap', function(evt) {
 var behavior = new H.mapevents.Behavior(mapEvents);
 
  // Create a marker icon from an image URL:
-var iconHelp = new H.map.Icon('images/help.png');
+var iconHelped = new H.map.Icon('images/helped.png');
+var iconHelper = new H.map.Icon('images/helper.png');
 
-addMarker(39.4670, -0.4037);
+var groupHelped = new H.map.Group(); map.addObject(groupHelped);
+var groupHelper = new H.map.Group(); map.addObject(groupHelper);
+
+
+addMarker(39.4670, -0.4037, 'helped');
+addMarker(39.4600, -0.4007, 'helper');
 
 // Add a marker
-function addMarker(latitud, longitud){
-  var myMarker = new H.map.Marker({ lat: latitud, lng: longitud }, { icon: iconHelp });
+function addMarker(latitud, longitud, type){
+  var myMarker = new H.map.Marker({ lat: latitud, lng: longitud });
+  if (type == 'helped') {
+    myMarker.setIcon(iconHelped);
+  } else if (type == 'helper'){
+    myMarker.setIcon(iconHelper);
+  }
   map.addObject(myMarker);
 }
