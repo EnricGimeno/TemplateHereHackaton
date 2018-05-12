@@ -25,7 +25,7 @@
       <h4>Left Panel</h4>
     </div>
 
-    <div id="mapContainer" style="width: 100%; height: 800px; background: grey" /> 
+    <div id="mapContainer" style="width: 100%; height: 600px; background: grey" /> 
     <!-- <div class="container">
     <div class="here-maps" id="mapContainer"></div>
     </div> -->

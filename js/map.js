@@ -32,4 +32,15 @@ var platform = new H.service.Platform({
       // Instantiate the default behavior, providing the mapEvents object: (Zoom and move map)
       var behavior = new H.mapevents.Behavior(mapEvents);
 
+       // Create a marker icon from an image URL:
+      var iconHelp = new H.map.Icon('images/help.png');
+      
+      addMarker(39.4670, -0.4037);
+
+      // Add a marker
+      function addMarker(latitud, longitud){
+        var myMarker = new H.map.Marker({ lat: latitud, lng: longitud }, { icon: iconHelp });
+        map.addObject(myMarker);
+      }
+  
 
