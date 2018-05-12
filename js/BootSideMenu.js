@@ -22,7 +22,7 @@
             side: "left",
             duration: 500,
             remember: true,
-            autoClose: false,
+            autoClose: true,
             pushBody: true,
             closeOnClick: true,
             icons: {
