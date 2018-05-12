@@ -37,9 +37,24 @@ var iconHelped = new H.map.Icon('images/helped.png');
 var iconHelper = new H.map.Icon('images/helper.png');
 
 // Create groups to get the markers categorised
-var groupHelped = new H.map.Group(); map.addObject(groupHelped);
-var groupHelper = new H.map.Group(); map.addObject(groupHelper);
-var groupError = new H.map.Group(); map.addObject(groupError);
+var groupHelped = new H.map.Group(); map.addObject(groupHelped); addInfoBubbleListener(groupHelped);
+var groupHelper = new H.map.Group(); map.addObject(groupHelper); addInfoBubbleListener(groupHelper);
+var groupError = new H.map.Group(); map.addObject(groupError); addInfoBubbleListener(groupError);
+
+
+function addInfoBubbleListener(group) {
+  group.addEventListener('tap', function (evt) {
+    // event target is the marker itself, group is a parent event target
+    // for all objects that it contains
+    var bubble =  new H.ui.InfoBubble(evt.target.getPosition(), {
+      // read custom data
+      content: evt.target.getData()
+    });
+    // show info bubble
+    ui.addBubble(bubble);
+  }, false);
+}
+
 
 addMarker(39.4670, -0.4037, 'helped');
 addMarker(39.4600, -0.4007, 'helper');
@@ -50,11 +65,14 @@ function addMarker(latitud, longitud, type){
   var myMarker = new H.map.Marker({ lat: latitud, lng: longitud });
   if (type == 'helped') {
     myMarker.setIcon(iconHelped);
+    myMarker.setData('<div>Hello</div>');
     groupHelped.addObject(myMarker);
   } else if (type == 'helper'){
     myMarker.setIcon(iconHelper);
+    myMarker.setData('<div>Hello</div>');
     groupHelper.addObject(myMarker);
   } else {
     groupError.addObject(myMarker);
+    myMarker.setData('<div>Hello</div>');
   }
 }
