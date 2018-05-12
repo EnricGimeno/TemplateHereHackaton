@@ -60,122 +60,85 @@ addMarker(39.4670, -0.4037, 'helped');
 addMarker(39.4600, -0.4007, 'helper');
 addMarker(39.4690, -0.4097, 'whatever');
 
-// Obtain the default map types from the platform object
-var maptypes = platform.createDefaultLayers();
 
-// Instantiate (and display) a map object:
-var map = new H.Map(
-  document.getElementById('mapContainer'),
-  maptypes.normal.map,
-  {
-    zoom: 13,
-    center: { lng: -0.38, lat: 39.47 }
-  });
+// Isoline route
+var routingParams = createRoutingParams(39.4670, -0.4037);
 
-
-  // Create the default UI:
-  var ui = H.ui.UI.createDefault(map, maptypes, 'es-ES');
-
-   // Enable the event system on the map instance:
-  var mapEvents = new H.mapevents.MapEvents(map);
-
-  // Add event listener:
-  map.addEventListener('tap', function(evt) {
-    // Log 'tap' and 'mouse' events:
-    console.log(evt.type, evt.currentPointer.type); 
-  });
-
-  // Instantiate the default behavior, providing the mapEvents object: (Zoom and move map)
-  var behavior = new H.mapevents.Behavior(mapEvents);
-
-   // Create a marker icon from an image URL:
-  var iconHelp = new H.map.Icon('images/help.png');
-
-  //addMarker(39.4670, -0.4037);
-
-  // Add a marker
-  function addMarker(latitud, longitud){
-    var myMarker = new H.map.Marker({ lat: latitud, lng: longitud }, { icon: iconHelp });
-    map.addObject(myMarker);
-  }
-
-
-  // Isoline route
-  var routingParams = createRoutingParams(39.4670, -0.4037);
-
-  function createRoutingParams(latitud, longitud){
-    var start = 'geo!'+ latitud + ',' + longitud
-    return routingParams = {
-      'mode': 'fastest;pedestrian;',
-      'start': start,
-      'range': '900',
-      'rangetype': 'time'
-    };
-
-  }
-
-  // Define a callback function to process the isoline response.
-  var onResult = function(result) {
-    var center = new H.geo.Point(
-        result.response.center.latitude,
-        result.response.center.longitude),
-      isolineCoords = result.response.isoline[0].component[0].shape,
-      linestring = new H.geo.LineString(),
-      isolinePolygon,
-      isolineCenter;
-
-    // Add the returned isoline coordinates to a linestring:
-    isolineCoords.forEach(function(coords) {
-    linestring.pushLatLngAlt.apply(linestring, coords.split(','));
-    });
-
-    // Create a polygon and a marker representing the isoline:
-    isolinePolygon = new H.map.Polygon(linestring);
-    isolineCenter = new H.map.Marker(center, { icon: iconHelp });
-
-    // Add the polygon and marker to the map:
-    map.addObjects([isolineCenter, isolinePolygon]);
-
-    // Center and zoom the map so that the whole isoline polygon is
-    // in the viewport:
-    //map.setViewBounds(isolinePolygon.getBounds());
+function createRoutingParams(latitud, longitud){
+  var start = 'geo!'+ latitud + ',' + longitud
+  return routingParams = {
+    'mode': 'fastest;pedestrian;',
+    'start': start,
+    'range': '900',
+    'rangetype': 'time'
   };
 
-  // Get an instance of the routing service:
-  var router = platform.getRoutingService();
+}
 
-  // Call the Routing API to calculate an isoline:
-  var isoline = router.calculateIsoline(
-    routingParams,
-    onResult,
-    function(error) {
-    alert(error.message);
-    }
-  );
+// Define a callback function to process the isoline response.
+var onResult = function(result) {
+  var center = new H.geo.Point(
+      result.response.center.latitude,
+      result.response.center.longitude),
+    isolineCoords = result.response.isoline[0].component[0].shape,
+    linestring = new H.geo.LineString(),
+    isolinePolygon,
+    isolineCenter;
 
+  // Add the returned isoline coordinates to a linestring:
+  isolineCoords.forEach(function(coords) {
+  linestring.pushLatLngAlt.apply(linestring, coords.split(','));
+  });
 
-  var polygon = [ [ 39.6317911,-0.5827676], [ 39.3936864,-0.6501673 ], [ 39.3620944,-0.3548876 ], [ 39.5528639,-0.3155277 ] ];
-  var insideBool = inside([ 39.4783, -0.3461 ], polygon);
-  console.log(insideBool);
+  // Create a polygon representing the isoline:
+  isolinePolygon = new H.map.Polygon(linestring);
 
-  function inside(point, vs) {
-    // ray-casting algorithm based on
-    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  // Add the polygon and marker to the map:
+  map.addObjects([isolineCenter, isolinePolygon]);
 
-    var x = point[0], y = point[1];
-
-    var inside = false;
-    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-        var xi = vs[i][0], yi = vs[i][1];
-        var xj = vs[j][0], yj = vs[j][1];
-
-        var intersect = ((yi > y) != (yj > y))
-            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-        if (intersect) inside = !inside;
-    }
-
-    return inside;
+  // Center and zoom the map so that the whole isoline polygon is
+  // in the viewport:
+  //map.setViewBounds(isolinePolygon.getBounds());
 };
+
+// Get an instance of the routing service:
+var router = platform.getRoutingService();
+
+// Call the Routing API to calculate an isoline:
+var isoline = router.calculateIsoline(
+  routingParams,
+  onResult,
+  function(error) {
+  alert(error.message);
+  }
+);
+
+function inside(point, vs) {
+  // ray-casting algorithm based on
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+  var x = point[0], y = point[1];
+
+  var inside = false;
+  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      var xi = vs[i][0], yi = vs[i][1];
+      var xj = vs[j][0], yj = vs[j][1];
+
+      var intersect = ((yi > y) != (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+
+    }
+  }
+  rawFile.send(null);
+}
+
+
+
 
 // Add a marker
 function addMarker(latitud, longitud, type){
