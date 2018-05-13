@@ -1,12 +1,13 @@
+var app_id = 'taQaDxUhv6uR26t2Z4s7';
+var app_code = 'yl5CDqRbwFRI-WPW1sLNDA';
+
 // Initialize the platform object:
 var platform = new H.service.Platform({
   'app_id': 'taQaDxUhv6uR26t2Z4s7',
   'app_code': 'yl5CDqRbwFRI-WPW1sLNDA'
 });
-
 // Obtain the default map types from the platform object
 var maptypes = platform.createDefaultLayers();
-
 // Instantiate (and display) a map object:
 var map = new H.Map(
 document.getElementById('mapContainer'),
@@ -15,77 +16,14 @@ maptypes.normal.map,
   zoom: 13,
   center: { lng: -0.38, lat: 39.47 }
 });
-
-
 // Create the default UI:
 var ui = H.ui.UI.createDefault(map, maptypes, 'es-ES');
-
  // Enable the event system on the map instance:
 var mapEvents = new H.mapevents.MapEvents(map);
-
-// Add event listener:
-map.addEventListener('tap', function(evt) {
-  // Log 'tap' and 'mouse' events:
-  console.log(evt.type, evt.currentPointer.type);
-});
-
 // Instantiate the default behavior, providing the mapEvents object: (Zoom and move map)
 var behavior = new H.mapevents.Behavior(mapEvents);
 
-
-
-function addInfoBubbleListener(group) {
-  group.addEventListener('tap', function (evt) {
-    // event target is the marker itself, group is a parent event target
-    // for all objects that it contains
-    var bubble =  new H.ui.InfoBubble(evt.target.getPosition(), {
-      // read custom data
-      content: evt.target.getData()
-    });
-    // show info bubble
-    ui.addBubble(bubble);
-  }, false);
-}
-
-
-
-
-function createRoutingParams(latitud, longitud){ //para calculateIsolineMarker
-  var start = 'geo!'+ latitud + ',' + longitud
-  return routingParams = {
-    'mode': 'fastest;pedestrian;',
-    'start': start,
-    'range': '900',
-    'rangetype': 'time'
-  };
-}
-
-// Define a callback function to process the isoline response.
-
-
-// Get an instance of the routing service:
-
-// Call the Routing API to calculate an isoline:
-
-
-function inside(point, vs) {
-  // ray-casting algorithm based on
-  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-
-  var x = point[0], y = point[1];
-
-  var inside = false;
-  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      var xi = vs[i][0], yi = vs[i][1];
-      var xj = vs[j][0], yj = vs[j][1];
-
-      var intersect = ((yi > y) != (yj > y))
-          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-  }
-  return inside;
-}
-
+//////////////////// DOWNLOADED FUNCTIONS
 function calculateIsolineMarker (marker){
   var routingParams = createRoutingParams(marker.lat, marker.lng);
   var onResult = function(result) { //para calculateIsolineMarker
@@ -122,9 +60,9 @@ function calculateIsolineMarker (marker){
   );
 }
 
-var datos;
+var dataFromText;
 
-function readTextFile(file) {
+function readJSONFile(file) {
   var rawFile = new XMLHttpRequest();
   rawFile.open("GET", file, false);
   rawFile.onreadystatechange = function ()
@@ -134,13 +72,55 @@ function readTextFile(file) {
       if(rawFile.status === 200 || rawFile.status == 0)
       {
         var JSONdata = rawFile.responseText;
-        datos = JSON.parse(JSONdata);
+        dataFromText = JSON.parse(JSONdata);
       }
     }
   }
   rawFile.send(null);
 }
 
+function inside(point, vs) {
+  // ray-casting algorithm based on
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+  var x = point[0], y = point[1];
+
+  var inside = false;
+  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      var xi = vs[i][0], yi = vs[i][1];
+      var xj = vs[j][0], yj = vs[j][1];
+
+      var intersect = ((yi > y) != (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+
+//////////////////// CUSTOM FUNCTIONS
+function addInfoBubbleListener(group) {
+  group.addEventListener('tap', function (evt) {
+    // event target is the marker itself, group is a parent event target
+    // for all objects that it contains
+    var bubble =  new H.ui.InfoBubble(evt.target.getPosition(), {
+      // read custom data
+      content: evt.target.getData()
+    });
+    // show info bubble
+    ui.addBubble(bubble);
+  }, false);
+}
+
+function createRoutingParams(latitud, longitud){ //set params for calculateIsolineMarker
+  var start = 'geo!'+ latitud + ',' + longitud
+  return routingParams = {
+    'mode': 'fastest;pedestrian;',
+    'start': start,
+    'range': '900',
+    'rangetype': 'time'
+  };
+}
 
 function createHelperMarkers(datosHelper){
   for (var i = 0; i < datosHelper.length; i++) {
@@ -168,6 +148,23 @@ function addMarker(latitud, longitud, type, data){
   }
 }
 
+function calculateIsolineForEach (marker, index, group){
+  //calculateIsolineMarker(marker);
+  var coords = marker.getPosition();
+  var urlCall = 'https://isoline.route.cit.api.here.com/routing/7.2/calculateisoline.json?app_id='.concat(app_id,'&app_code=',app_code,'&mode=fastest;pedestrian&start=geo!',coords.lat,',',coords.lng,'&range=900&rangetype=time');
+  readJSONFile(urlCall);
+  var isoline = dataFromText.response.isoline[0].component[0].shape;
+  var linestring = new H.geo.LineString();
+  for (i=0; i<isoline.length; i++) {
+    var punto = isoline[i].split(',');
+    linestring.pushLatLngAlt(punto[0],punto[1]);
+  }
+  console.log(linestring);
+  var isolinePolygon = new H.map.Polygon(linestring);
+  map.addObjects([isolinePolygon]);
+}
+
+//////////////////// CALLS
 // Create a marker icon from an image URL:
 var iconHelped = new H.map.Icon('images/helped.png');
 var iconHelper = new H.map.Icon('images/helper.png');
@@ -177,12 +174,9 @@ var groupHelped = new H.map.Group(); map.addObject(groupHelped); addInfoBubbleLi
 var groupHelper = new H.map.Group(); map.addObject(groupHelper); addInfoBubbleListener(groupHelper);
 var groupError = new H.map.Group(); map.addObject(groupError); addInfoBubbleListener(groupError);
 
+readJSONFile("https://raw.githubusercontent.com/vicmonf1/TemplateHereHackaton/pr/1/json/helper.json");
+createHelperMarkers(dataFromText);
 
-readTextFile("file:///D:/user/Documents/GitHub/TemplateHereHackatonV/json/helper.json");
-createHelperMarkers(datos);
+groupHelper.forEach(calculateIsolineForEach);
 
-var MarkersDeHelpers = groupHelper.forEach(calcularIsolinea);
 
-function calcularIsolinea (marker, index, group){
-  calculateIsolineMarker(marker);
-}
