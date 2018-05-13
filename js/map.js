@@ -32,14 +32,6 @@ map.addEventListener('tap', function(evt) {
 // Instantiate the default behavior, providing the mapEvents object: (Zoom and move map)
 var behavior = new H.mapevents.Behavior(mapEvents);
 
- // Create a marker icon from an image URL:
-var iconHelped = new H.map.Icon('images/helped.png');
-var iconHelper = new H.map.Icon('images/helper.png');
-
-// Create groups to get the markers categorised
-var groupHelped = new H.map.Group(); map.addObject(groupHelped); addInfoBubbleListener(groupHelped);
-var groupHelper = new H.map.Group(); map.addObject(groupHelper); addInfoBubbleListener(groupHelper);
-var groupError = new H.map.Group(); map.addObject(groupError); addInfoBubbleListener(groupError);
 
 
 function addInfoBubbleListener(group) {
@@ -56,15 +48,9 @@ function addInfoBubbleListener(group) {
 }
 
 
-addMarker(39.4670, -0.4037, 'helped');
-addMarker(39.4600, -0.4007, 'helper');
-addMarker(39.4690, -0.4097, 'whatever');
 
 
-// Isoline route
-var routingParams = createRoutingParams(39.4670, -0.4037);
-
-function createRoutingParams(latitud, longitud){
+function createRoutingParams(latitud, longitud){ //para calculateIsolineMarker
   var start = 'geo!'+ latitud + ',' + longitud
   return routingParams = {
     'mode': 'fastest;pedestrian;',
@@ -72,46 +58,15 @@ function createRoutingParams(latitud, longitud){
     'range': '900',
     'rangetype': 'time'
   };
-
 }
 
 // Define a callback function to process the isoline response.
-var onResult = function(result) {
-  var center = new H.geo.Point(
-      result.response.center.latitude,
-      result.response.center.longitude),
-    isolineCoords = result.response.isoline[0].component[0].shape,
-    linestring = new H.geo.LineString(),
-    isolinePolygon,
-    isolineCenter;
 
-  // Add the returned isoline coordinates to a linestring:
-  isolineCoords.forEach(function(coords) {
-  linestring.pushLatLngAlt.apply(linestring, coords.split(','));
-  });
-
-  // Create a polygon representing the isoline:
-  isolinePolygon = new H.map.Polygon(linestring);
-
-  // Add the polygon and marker to the map:
-  map.addObjects([isolineCenter, isolinePolygon]);
-
-  // Center and zoom the map so that the whole isoline polygon is
-  // in the viewport:
-  //map.setViewBounds(isolinePolygon.getBounds());
-};
 
 // Get an instance of the routing service:
-var router = platform.getRoutingService();
 
 // Call the Routing API to calculate an isoline:
-var isoline = router.calculateIsoline(
-  routingParams,
-  onResult,
-  function(error) {
-  alert(error.message);
-  }
-);
+
 
 function inside(point, vs) {
   // ray-casting algorithm based on
@@ -131,6 +86,43 @@ function inside(point, vs) {
   return inside;
 }
 
+function calculateIsolineMarker (marker){
+  var routingParams = createRoutingParams(marker.lat, marker.lng);
+  var onResult = function(result) { //para calculateIsolineMarker
+    var center = new H.geo.Point(
+        result.response.center.latitude,
+        result.response.center.longitude),
+      isolineCoords = result.response.isoline[0].component[0].shape,
+      linestring = new H.geo.LineString(),
+      isolinePolygon,
+      isolineCenter;
+
+    // Add the returned isoline coordinates to a linestring:
+    isolineCoords.forEach(function(coords) {
+    linestring.pushLatLngAlt.apply(linestring, coords.split(','));
+    });
+
+    // Create a polygon representing the isoline:
+    isolinePolygon = new H.map.Polygon(linestring);
+
+    // Add the polygon and marker to the map:
+    map.addObjects([isolineCenter, isolinePolygon]);
+
+    // Center and zoom the map so that the whole isoline polygon is
+    // in the viewport:
+    //map.setViewBounds(isolinePolygon.getBounds());
+  };
+  var router = platform.getRoutingService();
+  var isoline = router.calculateIsoline(
+    routingParams,
+    onResult,
+    function(error) {
+    alert(error.message);
+    }
+  );
+}
+
+var datos;
 
 function readTextFile(file) {
   var rawFile = new XMLHttpRequest();
@@ -141,8 +133,8 @@ function readTextFile(file) {
     {
       if(rawFile.status === 200 || rawFile.status == 0)
       {
-        var allText = rawFile.responseText;
-        console.log(allText);
+        var JSONdata = rawFile.responseText;
+        datos = JSON.parse(JSONdata);
       }
     }
   }
@@ -150,22 +142,47 @@ function readTextFile(file) {
 }
 
 
-
-console.log(readTextFile("file:///D:/user/Documents/GitHub/TemplateHereHackatonV/json/hihelpers.json"));
+function createHelperMarkers(datosHelper){
+  for (var i = 0; i < datosHelper.length; i++) {
+    console.log(datosHelper[i].NOMBRE);
+    var objeto = datosHelper[i];
+    var latitud1 = objeto.LAT;
+    addMarker(datosHelper[i].LON, datosHelper[i].LAT, 'helper', datosHelper[i].NOMBRE);
+  }
+}
 
 // Add a marker
-function addMarker(latitud, longitud, type){
+function addMarker(latitud, longitud, type, data){
   var myMarker = new H.map.Marker({ lat: latitud, lng: longitud });
   if (type == 'helped') {
     myMarker.setIcon(iconHelped);
-    myMarker.setData('<div>Hello</div>');
+    myMarker.setData(data);
     groupHelped.addObject(myMarker);
   } else if (type == 'helper'){
     myMarker.setIcon(iconHelper);
-    myMarker.setData('<div>Hello</div>');
+    myMarker.setData(data);
     groupHelper.addObject(myMarker);
   } else {
     groupError.addObject(myMarker);
-    myMarker.setData('<div>Hello</div>');
+    myMarker.setData(data);
   }
+}
+
+// Create a marker icon from an image URL:
+var iconHelped = new H.map.Icon('images/helped.png');
+var iconHelper = new H.map.Icon('images/helper.png');
+
+// Create groups to get the markers categorised
+var groupHelped = new H.map.Group(); map.addObject(groupHelped); addInfoBubbleListener(groupHelped);
+var groupHelper = new H.map.Group(); map.addObject(groupHelper); addInfoBubbleListener(groupHelper);
+var groupError = new H.map.Group(); map.addObject(groupError); addInfoBubbleListener(groupError);
+
+
+readTextFile("file:///D:/user/Documents/GitHub/TemplateHereHackatonV/json/helper.json");
+createHelperMarkers(datos);
+
+var MarkersDeHelpers = groupHelper.forEach(calcularIsolinea);
+
+function calcularIsolinea (marker, index, group){
+  calculateIsolineMarker(marker);
 }

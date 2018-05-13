@@ -1,0 +1,62 @@
+[
+{
+  "NOMBRE": "Demesio del Tránsito",
+  "APELLIDOS": "hermosilla Sanhueza",
+  "EMPRESA": "HiHelp Asociation",
+  "DIRECCIÓN": "",
+  "RATIO": 37,
+  "TIPO_PERSONA": "TERCERA EDAD",
+  "SERVICIO": "",
+  "DISPONIBILIDAD": "",
+  "LAT": -0.325908674,
+  "LON": 39.48097831
+},
+{
+  "NOMBRE": "Carlos",
+  "APELLIDOS": "Espejo Valenzuela",
+  "EMPRESA": "HiHelp Asociation",
+  "DIRECCIÓN": "",
+  "RATIO": 31,
+  "TIPO_PERSONA": "DISCAPACITADOS",
+  "SERVICIO": "",
+  "DISPONIBILIDAD": "",
+  "LAT": -0.341521423,
+  "LON": 39.46705018
+},
+{
+  "NOMBRE": "Norma",
+  "APELLIDOS": "Guerrero Leal",
+  "EMPRESA": "HiHelp Asociation",
+  "DIRECCIÓN": "",
+  "RATIO": 10,
+  "TIPO_PERSONA": "DISCAPACITADOS",
+  "SERVICIO": "",
+  "DISPONIBILIDAD": "",
+  "LAT": -0.338814099,
+  "LON": 39.46326886
+},
+{
+  "NOMBRE": "Marcela Elizabeth",
+  "APELLIDOS": "Román Ramos",
+  "EMPRESA": "HiHelp Asociation",
+  "DIRECCIÓN": "",
+  "RATIO": 18,
+  "TIPO_PERSONA": "DISCAPACITADOS",
+  "SERVICIO": "",
+  "DISPONIBILIDAD": "",
+  "LAT": -0.330163933,
+  "LON": 39.48376306
+},
+{
+  "NOMBRE": "Teresa del Carmen",
+  "APELLIDOS": "Aguirre Vignolo",
+  "EMPRESA": "HiHelp Asociation",
+  "DIRECCIÓN": "",
+  "RATIO": 13,
+  "TIPO_PERSONA": "TERCERA EDAD",
+  "SERVICIO": "",
+  "DISPONIBILIDAD": "",
+  "LAT": -0.383165168,
+  "LON": 39.47378596
+}
+]
