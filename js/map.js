@@ -126,8 +126,15 @@ function createHelperMarkers(datosHelper){
   for (var i = 0; i < datosHelper.length; i++) {
     console.log(datosHelper[i].NOMBRE);
     var objeto = datosHelper[i];
-    var latitud1 = objeto.LAT;
     addMarker(datosHelper[i].LON, datosHelper[i].LAT, 'helper', datosHelper[i].NOMBRE);
+  }
+}
+
+function createHelpedMarkers(datosHelped){
+  for (var i = 0; i < datosHelped.length; i++) {
+    console.log(datosHelped[i].NOMBRE);
+    var objeto = datosHelped[i];
+    addMarker(datosHelped[i].LON, datosHelped[i].LAT, 'helped', datosHelped[i].NOMBRE);
   }
 }
 
@@ -137,7 +144,7 @@ function addMarker(latitud, longitud, type, data){
   if (type == 'helped') {
     myMarker.setIcon(iconHelped);
     myMarker.setData(data);
-    groupHelped.addObject(myMarker);
+    groupHelpedHidden.addObject(myMarker);
   } else if (type == 'helper'){
     myMarker.setIcon(iconHelper);
     myMarker.setData(data);
@@ -156,12 +163,31 @@ function calculateIsolineForEach (marker, index, group){
   var isoline = dataFromText.response.isoline[0].component[0].shape;
   var linestring = new H.geo.LineString();
   for (i=0; i<isoline.length; i++) {
-    var punto = isoline[i].split(',');
-    linestring.pushLatLngAlt(punto[0],punto[1]);
+    isoline[i] = isoline[i].split(',');
+    linestring.pushLatLngAlt(isoline[i][0],isoline[i][1]);
   }
   console.log(linestring);
   var isolinePolygon = new H.map.Polygon(linestring);
-  map.addObjects([isolinePolygon]);
+  isolinePolygon.setData(isoline);
+  groupIsolines.addObject(isolinePolygon);
+}
+
+var actualIsoline;
+function showHelpedInTheAreaForEach(isoline, index, group){
+  actualIsoline = isoline;
+  groupHelpedHidden.forEach(showHelpedInTheArea, false, isoline);
+}
+
+function showHelpedInTheArea(marker, index, group){
+  console.log(marker);
+  console.log(index);
+  console.log(group);
+  var point = marker.getPosition();
+  point = [point.lat,point.lng];
+  vs = actualIsoline.getData();
+  if (inside(point,vs)){
+    groupHelped.addObject(marker);
+  }
 }
 
 //////////////////// CALLS
@@ -173,10 +199,19 @@ var iconHelper = new H.map.Icon('images/helper.png');
 var groupHelped = new H.map.Group(); map.addObject(groupHelped); addInfoBubbleListener(groupHelped);
 var groupHelper = new H.map.Group(); map.addObject(groupHelper); addInfoBubbleListener(groupHelper);
 var groupError = new H.map.Group(); map.addObject(groupError); addInfoBubbleListener(groupError);
+var groupIsolines = new H.map.Group(); map.addObject(groupIsolines); addInfoBubbleListener(groupIsolines);
+var groupHelpedHidden = new H.map.Group(); map.addObject(groupHelpedHidden); addInfoBubbleListener(groupHelpedHidden);
+
+groupHelpedHidden.setVisibility(false);
+
+readJSONFile("https://raw.githubusercontent.com/vicmonf1/TemplateHereHackaton/pr/1/json/hihelpers.json");
+createHelpedMarkers(dataFromText);
 
 readJSONFile("https://raw.githubusercontent.com/vicmonf1/TemplateHereHackaton/pr/1/json/helper.json");
 createHelperMarkers(dataFromText);
 
 groupHelper.forEach(calculateIsolineForEach);
+
+groupIsolines.forEach(showHelpedInTheAreaForEach);
 
 
