@@ -190,6 +190,15 @@ function showHelpedInTheArea(marker, index, group){
   }
 }
 
+function addCenterListener(group){
+  group.addEventListener('tap', function (evt) {
+    // event target is the marker itself, group is a parent event target
+    // for all objects that it contains
+    map.setCenter(evt.target.getPosition(),true);
+    map.setZoom(15,true);
+  }, false);
+}
+
 //////////////////// CALLS
 // Create a marker icon from an image URL:
 var iconHelped = new H.map.Icon('images/helped.png');
@@ -203,6 +212,7 @@ var groupIsolines = new H.map.Group(); map.addObject(groupIsolines); addInfoBubb
 var groupHelpedHidden = new H.map.Group(); map.addObject(groupHelpedHidden); addInfoBubbleListener(groupHelpedHidden);
 
 groupHelpedHidden.setVisibility(false);
+addCenterListener(groupHelper);
 
 readJSONFile("https://raw.githubusercontent.com/vicmonf1/TemplateHereHackaton/pr/1/json/hihelpers.json");
 createHelpedMarkers(dataFromText);
