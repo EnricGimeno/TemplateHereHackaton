@@ -1,0 +1,50 @@
+[
+ {
+   "NOMBRE": "Maria Angelica",
+   "APELLIDOS": "Muñoz Molina",
+   "EMPRESA": "HiHelp Asociation",
+   "DIRECCION": "",
+   "RATIO": 2,
+   "TIPO_PERSONA": "DISCAPACITADOS",
+   "SERVICIO": "",
+   "DISPONIBILIDAD": "",
+   "LAT": -0.41034372,
+   "LON": 39.45947747
+ },
+ {
+   "NOMBRE": "René Luis Alberto",
+   "APELLIDOS": "Arratia Rivas",
+   "EMPRESA": "HiHelp Asociation",
+   "DIRECCION": "",
+   "RATIO": 10,
+   "TIPO_PERSONA": "DISCAPACITADOS",
+   "SERVICIO": "",
+   "DISPONIBILIDAD": "",
+   "LAT": -0.327036864,
+   "LON": 39.47741417
+ },
+ {
+   "NOMBRE": "Honorina",
+   "APELLIDOS": "Ascencio Vera",
+   "EMPRESA": "HiHelp Asociation",
+   "DIRECCION": "",
+   "RATIO": 5,
+   "TIPO_PERSONA": "TERCERA EDAD",
+   "SERVICIO": "",
+   "DISPONIBILIDAD": "",
+   "LAT": -0.382717498,
+   "LON": 39.47391073
+ },
+ {
+   "NOMBRE": "Marilyn Marlene",
+   "APELLIDOS": "Mora Soutullo",
+   "EMPRESA": "HiHelp Asociation",
+   "DIRECCION": "",
+   "RATIO": 7,
+   "TIPO_PERSONA": "TERCERA EDAD",
+   "SERVICIO": "",
+   "DISPONIBILIDAD": "",
+   "LAT": -0.395265354,
+   "LON": 39.45500411
+ }
+]
